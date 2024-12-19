@@ -122,7 +122,8 @@ async function uploadFileToSlack(channelId: string, screenshotBuffer: Uint8Array
 }
 
 export default async function handler(req: any, res: any) {
-    const { type, challenge, event, dashboardUrl } = req.body;
+    const { event, dashboardUrl } = req.body;
+    console.log("req.body", req.body);
     if (req.method === 'POST') {
         try {
             // Grafana 대시보드 스크린샷 캡처
