@@ -1,0 +1,23 @@
+### GET request to example server
+POST http://localhost:3000/api/slack/events
+Content-Type: application/json
+
+{
+  "token": "verification-token",
+  "challenge": "3eZbrw1aBz7OB7rSRFwhphJ5gXgiDKhNRJzdTJS5Sn3",
+  "type": "url_verification"
+}
+
+### GET request to example server
+GET http://localhost:3000
+
+
+### GET request to example server
+POST https://luminary-kappa.vercel.app/api/slack/events
+Content-Type: application/json
+
+{
+  "token": "verification-token",
+  "challenge": "3eZbrw1aBz7OB7rSRFwhphJ5gXgiDKhNRJzdTJS5Sn3",
+  "type": "url_verification"
+}

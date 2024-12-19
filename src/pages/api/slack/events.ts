@@ -86,6 +86,7 @@ export default async function handler(
 ) {
     if (req.method === "POST") {
         const body: SlackRequestBody = req.body;
+        console.log('request body', body);
 
         // Slack URL 검증용
         if (body.challenge) {
