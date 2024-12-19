@@ -5,6 +5,12 @@ const GRAFANA_BASE_URL = process.env.GRAFANA_BASE_URL;
 const GRAFANA_API_KEY = process.env.GRAFANA_API_KEY;
 const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 
+const targetDashBoardGroup = [
+    "artemis(calendar)",
+    //"Luna",
+    //"MARS-AUTH",
+    //"STELLA",
+]
 async function fetchGrafanaDashboards() {
     try {
         const response = await axios.get(`${GRAFANA_BASE_URL}/api/search?type=dash-db`, {
@@ -12,7 +18,8 @@ async function fetchGrafanaDashboards() {
                 Authorization: `Bearer ${GRAFANA_API_KEY}`,
             },
         });
-        return response.data;
+        console.log("grafana dashboards", response.data);
+        return response.data.filter((dash: any) => targetDashBoardGroup.includes(dash.folderTitle));
     } catch (error: any) {
         console.error('Error fetching Grafana dashboards:', error.response?.data || error.message);
         throw error;
@@ -67,6 +74,7 @@ function createBlockKitMessage(dashboards: any[]) {
         });
     });
 
+    console.log('blocks', blocks);
     return blocks;
 }
 

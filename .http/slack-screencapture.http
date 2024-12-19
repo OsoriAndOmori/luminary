@@ -1,20 +1,10 @@
+
 ### GET request to example server
-POST http://localhost:3000/api/slack/events
+POST http://localhost:3000/api/slack/screencapture
 Content-Type: application/json
 
 {
-  "token": "verification-token",
-  "challenge": "3eZbrw1aBz7OB7rSRFwhphJ5gXgiDKhNRJzdTJS5Sn3",
-  "type": "url_verification"
-}
-
-### GET request to example server
-POST http://localhost:3000/api/slack/events
-Content-Type: application/json
-
-{
-  "token": "verification-token",
-  "challenge": "3eZbrw1aBz7OB7rSRFwhphJ5gXgiDKhNRJzdTJS5Sn3",
+  "dashboardUrl": "/d/e661a41f-3a40-400e-b985-8088e0292b9b/stg-jvm-micrometer",
   "event": {
     "type" : "app_mention",
     "channel": "C085T1LTVHQ"
@@ -34,3 +24,11 @@ Content-Type: application/json
   "challenge": "3eZbrw1aBz7OB7rSRFwhphJ5gXgiDKhNRJzdTJS5Sn3",
   "type": "url_verification"
 }
+
+
+### GET request to example server
+POST https://slack.com/api/files.getUploadURLExternal
+Authorization: Bearer XX
+Content-Type: application/x-www-form-urlencoded; charset=utf-8
+
+filename=filename.png&length=123
