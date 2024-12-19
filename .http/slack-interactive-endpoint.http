@@ -1,0 +1,12 @@
+
+### GET request to example server
+POST http://localhost:3000/api/slack/interactive-endpoint
+Content-Type: application/json
+
+{
+  "dashboardUrl": "/d/e661a41f-3a40-400e-b985-8088e0292b9b/stg-jvm-micrometer",
+  "event": {
+    "type" : "app_mention",
+    "channel": "C085T1LTVHQ"
+  }
+}

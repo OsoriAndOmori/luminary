@@ -51,7 +51,7 @@ async function sendSlackMessage(channel: string, blocks: any) {
 }
 
 function createBlockKitMessage(dashboards: any[]) {
-    const blocks = [
+    const blocks : any = [
         {
             type: 'section',
             text: {
@@ -71,6 +71,15 @@ function createBlockKitMessage(dashboards: any[]) {
                 type: 'mrkdwn',
                 text: `<${GRAFANA_BASE_URL}${dashboard.url}|*${dashboard.title}*>`,
             },
+            accessory: {
+                type: "button",
+                text: {
+                    "type": "plain_text",
+                    "text": "스샷"
+                },
+                action_id: "capture_button",
+                value: `${dashboard.url}`
+            }
         });
     });
 
@@ -85,6 +94,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Event verification from Slack (Challenge response)
         if (type === 'url_verification') {
             return res.status(200).json({ challenge });
+        }
+
+        if (type === 'capture_button'){
+
         }
 
         // Process incoming Slack event
