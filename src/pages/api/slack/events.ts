@@ -59,6 +59,8 @@ const getBlockKitMessage = () => ({
 
 // Slack에 메시지 전송 함수
 async function sendBlockKitMessage(channelId: string): Promise<void> {
+    console.log("channelId", channelId);
+    console.log("token", SLACK_BOT_TOKEN);
     const url = "https://slack.com/api/chat.postMessage";
 
     const response = await fetch(url, {
@@ -94,7 +96,7 @@ export default async function handler(
         }
 
         const event = body.event;
-        if (event?.type === "message" && event.text?.toLowerCase().includes("hello")) {
+        if (event?.type === "message") {
             await sendBlockKitMessage(event.channel);
         }
 
