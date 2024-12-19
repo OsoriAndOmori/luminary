@@ -96,7 +96,7 @@ export default async function handler(
         }
 
         const event = body.event;
-        if (event?.type === "message") {
+        if (event?.type === "app_mention") {
             await sendBlockKitMessage(event.channel);
         }
 
