@@ -12,8 +12,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             if (action.action_id === 'capture_button') {
                 // 버튼 클릭 시 실행할 POST 요청
+                const protocol = req.headers['x-forwarded-proto'] || 'http';
+                const host = req.headers['x-forwarded-host'] || req.headers.host;
+                const fullUrl = `${protocol}://${host}`;
+
+                console.log("fullUrl", fullUrl);
                 try {
-                    const response = await axios.post('http://localhost:3000/api/slack/screen-capture', {
+                    const response = await axios.post(`${fullUrl}/api/slack/screen-capture`, {
                         dashboardUrl: action.value,
                         event: {
                             channel: event.container["channel_id"]
