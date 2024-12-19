@@ -69,7 +69,7 @@ function createBlockKitMessage(dashboards: any[]) {
             type: 'section',
             text: {
                 type: 'mrkdwn',
-                text: `*${dashboard.title}*\n<${GRAFANA_BASE_URL}${dashboard.url}|Open Dashboard>`,
+                text: `<${GRAFANA_BASE_URL}${dashboard.url}|*${dashboard.title}*>`,
             },
         });
     });

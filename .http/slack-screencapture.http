@@ -28,7 +28,7 @@ Content-Type: application/json
 
 ### GET request to example server
 POST https://slack.com/api/files.getUploadURLExternal
-Authorization: Bearer XX
+Authorization: Bearer xx
 Content-Type: application/x-www-form-urlencoded; charset=utf-8
 
 filename=filename.png&length=123

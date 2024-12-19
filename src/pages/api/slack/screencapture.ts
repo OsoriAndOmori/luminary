@@ -48,7 +48,7 @@ async function captureGrafanaScreenshot(dashboardUrl: string) {
     return screenshotBuffer;
 }
 
-async function uploadFileToSlack(channels: string, screenshotBuffer: Uint8Array, filename: string, ) {
+async function uploadFileToSlack(channelId: string, screenshotBuffer: Uint8Array, filename: string, ) {
     try {
         const buffer = Buffer.from(screenshotBuffer);
         const length = buffer.length;
@@ -57,9 +57,10 @@ async function uploadFileToSlack(channels: string, screenshotBuffer: Uint8Array,
         params.append('length', length.toString()); // length는 문자열로 변환
 
 
-        const filePath = 'public/images/screenshot.png';
+        //TODO 삭제해야함.
+        //const filePath = 'public/images/screenshot.png';
         // 동기적으로 파일 저장 (writeFileSync)
-        fs.writeFileSync(filePath, buffer);
+        //fs.writeFileSync(filePath, buffer);
 
         // 1. files.getUploadURLExternal 호출하여 업로드 URL 획득
         const uploadUrlResponse = await axios.post(
@@ -73,6 +74,8 @@ async function uploadFileToSlack(channels: string, screenshotBuffer: Uint8Array,
             }
         );
 
+        console.log("uploadUrlResponse", uploadUrlResponse);
+
         if (!uploadUrlResponse.data.ok) {
             throw new Error(`Error getting upload URL: ${uploadUrlResponse.data.error}`);
         }
@@ -80,7 +83,7 @@ async function uploadFileToSlack(channels: string, screenshotBuffer: Uint8Array,
         const uploadUrl = uploadUrlResponse.data.upload_url;
 
         // 2. 업로드 URL로 파일 업로드
-        let axiosResponse = await axios.put(uploadUrl, buffer, {
+        await axios.post(uploadUrl, buffer, {
             headers: {
                 'Content-Type': 'application/octet-stream',
             },
@@ -92,11 +95,10 @@ async function uploadFileToSlack(channels: string, screenshotBuffer: Uint8Array,
             {
                 files: [
                     {
-                        id: uploadUrlResponse.data.file_id,
-                        title: filename,
+                        id: uploadUrlResponse.data.file_id
                     },
                 ],
-                channels: channels,
+                channel_id: channelId,
             },
             {
                 headers: {
