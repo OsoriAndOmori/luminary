@@ -1,0 +1,3 @@
+### GET request to example server
+GET https://grafana.sktapollo.com/api/search?type=dash-db
+Authorization: Bearer test

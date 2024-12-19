@@ -1,107 +1,100 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import axios from 'axios';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN as string;
+const GRAFANA_BASE_URL = process.env.GRAFANA_BASE_URL;
+const GRAFANA_API_KEY = process.env.GRAFANA_API_KEY;
+const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 
-interface SlackEvent {
-    type: string;
-    text?: string;
-    channel: string;
+async function fetchGrafanaDashboards() {
+    try {
+        const response = await axios.get(`${GRAFANA_BASE_URL}/api/search?type=dash-db`, {
+            headers: {
+                Authorization: `Bearer ${GRAFANA_API_KEY}`,
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error('Error fetching Grafana dashboards:', error.response?.data || error.message);
+        throw error;
+    }
 }
 
-interface SlackRequestBody {
-    challenge?: string;
-    event?: SlackEvent;
+async function sendSlackMessage(channel: string, blocks: any) {
+    try {
+        const response = await axios.post(
+            'https://slack.com/api/chat.postMessage',
+            {
+                channel,
+                blocks,
+                text: 'Grafana Dashboards',
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        if (!response.data.ok) {
+            console.error('Error sending message to Slack:', response.data.error);
+        }
+    } catch (error: any) {
+        console.error('Error sending message to Slack:', error.message);
+    }
 }
 
-// Block Kit 메시지 생성 함수
-const getBlockKitMessage = () => ({
-    blocks: [
+function createBlockKitMessage(dashboards: any[]) {
+    const blocks = [
         {
-            type: "section",
+            type: 'section',
             text: {
-                type: "mrkdwn",
-                text: "Hello! This is a *Block Kit* message!",
+                type: 'mrkdwn',
+                text: '*Grafana Dashboards*',
             },
         },
         {
-            type: "divider",
+            type: 'divider',
         },
-        {
-            type: "section",
+    ];
+
+    dashboards.forEach((dashboard) => {
+        blocks.push({
+            type: 'section',
             text: {
-                type: "mrkdwn",
-                text: "Here are some options:",
+                type: 'mrkdwn',
+                text: `*${dashboard.title}*\n<${GRAFANA_BASE_URL}${dashboard.url}|Open Dashboard>`,
             },
-        },
-        {
-            type: "actions",
-            elements: [
-                {
-                    type: "button",
-                    text: {
-                        type: "plain_text",
-                        text: "Option 1",
-                    },
-                    value: "option_1",
-                },
-                {
-                    type: "button",
-                    text: {
-                        type: "plain_text",
-                        text: "Option 2",
-                    },
-                    value: "option_2",
-                },
-            ],
-        },
-    ],
-});
-
-// Slack에 메시지 전송 함수
-async function sendBlockKitMessage(channelId: string): Promise<void> {
-    console.log("channelId", channelId);
-    console.log("token", SLACK_BOT_TOKEN);
-    const url = "https://slack.com/api/chat.postMessage";
-
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${SLACK_BOT_TOKEN}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            channel: channelId,
-            text: "This is a fallback text for Block Kit",
-            blocks: getBlockKitMessage().blocks,
-        }),
+        });
     });
 
-    const data = await response.json();
-    if (!data.ok) {
-        console.error("Failed to send message:", data.error);
-    }
+    return blocks;
 }
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
-    if (req.method === "POST") {
-        const body: SlackRequestBody = req.body;
-        console.log('request body', body);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'POST') {
+        const { type, challenge, event } = req.body;
 
-        // Slack URL 검증용
-        if (body.challenge) {
-            return res.status(200).json({ challenge: body.challenge });
+        // Event verification from Slack (Challenge response)
+        if (type === 'url_verification') {
+            return res.status(200).json({ challenge });
         }
 
-        const event = body.event;
-        if (event?.type === "app_mention") {
-            await sendBlockKitMessage(event.channel);
+        // Process incoming Slack event
+        if (event && event.type === 'app_mention') {
+            const channel = event.channel;
+            try {
+                const dashboards = await fetchGrafanaDashboards();
+                const blocks = createBlockKitMessage(dashboards);
+                await sendSlackMessage(channel, blocks);
+                res.status(200).send('Message sent');
+            } catch (error: any) {
+                console.error('Error processing event:', error.message);
+                res.status(500).send('Internal Server Error');
+            }
+        } else {
+            res.status(200).send('Event not handled');
         }
-
-        return res.status(200).end();
+    } else {
+        res.status(405).send('Method Not Allowed');
     }
-
-    return res.status(405).json({ error: "Method Not Allowed" });
 }

@@ -9,6 +9,18 @@ Content-Type: application/json
 }
 
 ### GET request to example server
+POST http://localhost:3000/api/slack/events
+Content-Type: application/json
+
+{
+  "token": "verification-token",
+  "challenge": "3eZbrw1aBz7OB7rSRFwhphJ5gXgiDKhNRJzdTJS5Sn3",
+  "event": {
+    "type" : "app_mention"
+  }
+}
+
+### GET request to example server
 GET http://localhost:3000
 
 
