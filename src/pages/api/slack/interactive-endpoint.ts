@@ -3,8 +3,9 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
+        console.log("/api/slack/interactive-endpoint request body : ", req.body)
+
         const { payload } = req.body;
-        console.log("interactive payload", payload);
 
         const event = JSON.parse(payload); // Slack 이벤트 페이로드 파싱
         if (event.type === 'block_actions') {
@@ -16,9 +17,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const host = req.headers['x-forwarded-host'] || req.headers.host;
                 const fullUrl = `${protocol}://${host}`;
 
-                console.log("fullUrl", fullUrl);
                 try {
-                    const response = await axios.post(`${fullUrl}/api/slack/screen-capture`, {
+                    const response = await axios.post(`${fullUrl}/api/screenshot/grafana`, {
                         dashboardUrl: action.value,
                         event: {
                             channel: event.container["channel_id"]
@@ -26,9 +26,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     });
 
                     res.status(200).json({
-                        text: 'Request successfully sent!',
-                        response_type: 'ephemeral',
+                        message: 'Request successfully sent!',
+                        file: response.data.file,
                     });
+
                 } catch (error) {
                     console.error('Error sending request:', error);
                     res.status(500).json({

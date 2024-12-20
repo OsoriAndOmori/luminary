@@ -22,10 +22,6 @@ Content-Type: application/json
 }
 
 ### GET request to example server
-GET http://localhost:3000
-
-
-### GET request to example server
 POST https://luminary-kappa.vercel.app/api/slack/events
 Content-Type: application/json
 

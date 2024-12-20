@@ -1,0 +1,11 @@
+
+### GET request to example server
+POST http://localhost:3000/api/screenshot/grafana
+Content-Type: application/json
+
+{
+  "dashboardUrl": "/d/HJabPsj7z/prd-redis-calendar-cache-dashboard",
+  "event": {
+    "channel": "hgssc cfcfC085T1LTVHQ"
+  }
+}
