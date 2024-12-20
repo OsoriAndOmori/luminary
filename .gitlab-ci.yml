@@ -1,0 +1,37 @@
+stages:
+  - build
+  - push
+
+variables:
+  # GitLab의 Docker Registry URL
+  REGISTRY_IMAGE: $CI_REGISTRY_IMAGE
+  # 태그 정의 (커밋 SHA 사용)
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# Docker 이미지 빌드 및 푸시를 위한 서비스
+image: docker:24.0
+services:
+  - docker:24.0-dind
+
+before_script:
+  # Docker 로그인
+  - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+
+build_image:
+  stage: build
+  script:
+    # Docker 이미지 빌드
+    - docker build -t $REGISTRY_IMAGE:$IMAGE_TAG .
+    # 최신 태그 추가
+    - docker tag $REGISTRY_IMAGE:$IMAGE_TAG $REGISTRY_IMAGE:latest
+  only:
+    - main
+
+push_image:
+  stage: push
+  script:
+    # 빌드된 Docker 이미지를 GitLab Registry로 푸시
+    - docker push $REGISTRY_IMAGE:$IMAGE_TAG
+    - docker push $REGISTRY_IMAGE:latest
+  only:
+    - main

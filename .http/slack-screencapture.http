@@ -4,10 +4,9 @@ POST http://localhost:3000/api/slack/screen-capture
 Content-Type: application/json
 
 {
-  "dashboardUrl": "/d/e661a41f-3a40-400e-b985-8088e0292b9b/stg-jvm-micrometer",
+  "dashboardUrl": "/d/HJabPsj7z/prd-redis-calendar-cache-dashboard",
   "event": {
-    "type" : "app_mention",
-    "channel": "C085T1LTVHQ"
+    "channel": "hgssc cfcfC085T1LTVHQ"
   }
 }
 

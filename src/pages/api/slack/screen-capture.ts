@@ -1,7 +1,5 @@
 import puppeteer from 'puppeteer';
 import axios from 'axios';
-import FormData from 'form-data';
-import * as fs from "node:fs";
 
 const GRAFANA_BASE_URL = process.env.GRAFANA_BASE_URL;
 const GRAFANA_API_KEY = process.env.GRAFANA_API_KEY;
