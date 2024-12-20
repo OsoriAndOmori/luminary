@@ -4,7 +4,7 @@ import {GRAFANA_API_KEY, GRAFANA_BASE_URL} from "@/utils/grafana/grafana";
 
 export default async function handler(req: any, res: any) {
     const {event, dashboardUrl} = req.body;
-    console.log("/api/slack/screen-capture request body : ", req.body);
+    console.log("/api/screenshot/grafana request body : ", req.body);
 
     if (req.method === 'POST') {
         try {
